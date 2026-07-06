@@ -1,6 +1,9 @@
 # EW4All Multi-Hazard Risk & Readiness Index
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Pr0spektor/climate-risk-early-warning/blob/main/notebook.ipynb)
+<!-- After the first GitHub release, replace with the Zenodo DOI badge (see RELEASING.md): -->
+<!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX) -->
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A reproducible, **real-data Climate Risk & Vulnerability Assessment (CRVA)** for the seven Green
 Climate Fund **Early Warnings for All (EW4All)** pilot countries — Antigua and Barbuda, Cambodia,
@@ -126,8 +129,18 @@ pip install -r requirements.txt
 python src/fetch_data.py      # re-fetch the latest real data from the World Bank + INFORM APIs
 python src/build_index.py     # compute the index + write results/ charts and CSV
 python src/spatial_map.py     # render the spatial (GIS-style) map of the index
-python src/uncertainty.py     # Monte-Carlo robustness (rank-stability + 90% intervals)
+python src/uncertainty.py     # Monte-Carlo robustness (rank-stability + sensitivity)
+python src/rainfall_ew.py     # live ERA5 rainfall early-warning (flood/drought alerts)
 ```
+
+### Live rainfall early-warning (ERA5)
+
+`src/rainfall_ew.py` fetches **real ERA5 reanalysis rainfall** (Open-Meteo, no key) for each pilot
+capital and fires **flood** alerts (rolling 3-day accumulation above the site's own p95/p99) and
+**drought** flags (consecutive dry-day runs). Thresholds self-calibrate to each site's climatology,
+so the method transfers from the Sahel to the Pacific unchanged — a working detection layer for
+EW4All Pillars 2–3. Data is pulled live at run time; `python src/rainfall_ew.py --selftest`
+validates the alert logic offline.
 
 Or open the notebook in Google Colab via the badge above (zero setup).
 
@@ -142,7 +155,8 @@ climate-risk-early-warning/
 │   ├── fetch_data.py              # live fetch from World Bank + JRC INFORM APIs
 │   ├── build_index.py             # computes index + charts + validation
 │   ├── spatial_map.py             # geospatial (GIS-style) map of the index
-│   └── uncertainty.py             # Monte-Carlo robustness / sensitivity analysis
+│   ├── uncertainty.py             # Monte-Carlo robustness / sensitivity analysis
+│   └── rainfall_ew.py             # live ERA5 rainfall flood/drought early-warning
 ├── results/
 │   ├── index.csv
 │   ├── index_ranking.png

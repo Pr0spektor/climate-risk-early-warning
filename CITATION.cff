@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+title: "EW4All Climate Risk & Vulnerability Assessment (CRVA) toolkit"
+message: "If you use this software, please cite it using these metadata."
+type: software
+authors:
+  - alias: Pr0spektor
+repository-code: "https://github.com/Pr0spektor/climate-risk-early-warning"
+abstract: >-
+  A reproducible, real-data Climate Risk & Vulnerability Assessment for the seven Green Climate
+  Fund Early Warnings for All (EW4All) pilot countries. Combines JRC INFORM Risk (hazard &
+  exposure, plus full component decomposition) with World Bank Open Data (vulnerability, readiness)
+  into a transparent composite index, with an independent INFORM cross-check, a geospatial view,
+  a Monte-Carlo uncertainty/rank-stability and sensitivity study, and a live ERA5 rainfall
+  early-warning demonstrator.
+keywords:
+  - climate-risk
+  - vulnerability-assessment
+  - early-warning-systems
+  - disaster-risk-reduction
+  - INFORM
+  - composite-indicators
+license: MIT
+version: "1.1.0"
+date-released: "2026-07-06"
