@@ -1,8 +1,8 @@
-iso3,country,population,gdp_pc_usd,undernourishment_pct,under5_mortality,rural_pct,electricity_access_pct,basic_water_pct,mobile_subs_per100
-ATG,Antigua and Barbuda,93772,23059.83,,9.1,75.6,100,98.9,
-KHM,Cambodia,17638801,2627.88,5.2,18.4,59.1,92.3,80.9,120.8
-TCD,Chad,20299123,980.67,32.0,97.3,73.1,11.7,52.0,70.2
-ECU,Ecuador,18135478,6826.53,12.1,12.9,36.8,100,91.7,101.0
-ETH,Ethiopia,132059767,1133.88,19.7,44.5,76.4,55.4,52.6,59.9
-FJI,Fiji,928784,6425.74,6.8,29.1,40.9,92.0,95.5,361.0
-SOM,Somalia,19009151,629.54,53.2,101.1,45.4,48.9,70.4,54.0
+iso3,country,population,gdp_pc_usd,undernourishment_pct,under5_mortality,rural_pct,electricity_access_pct,basic_water_pct,mobile_subs_per100,hazard_exposure_inform,inform_risk_overall
+ATG,Antigua and Barbuda,93772,23059.83,,9.1,75.6,100,98.9,,2.0,2.5
+KHM,Cambodia,17638801,2627.88,5.2,18.4,59.1,92.3,80.9,120.8,3.5,4.7
+TCD,Chad,20299123,980.67,32.0,97.3,73.1,11.7,52.0,70.2,3.9,6.5
+ECU,Ecuador,18135478,6826.53,12.1,12.9,36.8,100,91.7,101.0,4.3,4.1
+ETH,Ethiopia,132059767,1133.88,19.7,44.5,76.4,55.4,52.6,59.9,5.6,6.5
+FJI,Fiji,928784,6425.74,6.8,29.1,40.9,92.0,95.5,361.0,2.2,2.9
+SOM,Somalia,19009151,629.54,53.2,101.1,45.4,48.9,70.4,54.0,8.9,8.9

@@ -16,6 +16,8 @@ import pandas as pd
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 BASE = "https://api.worldbank.org/v2"
+INFORM = "https://drmkc.jrc.ec.europa.eu/Inform-Index/API/InformAPI"
+INFORM_WORKFLOW = 464  # latest INFORM Risk release published via the API (INFORM Risk 2023)
 
 COUNTRIES = {  # ISO2 used by the API -> ISO3 label we store
     "AG": "ATG", "KH": "KHM", "TD": "TCD", "EC": "ECU",
@@ -65,6 +67,13 @@ def latest_values(code: str, year: str, rng: str) -> dict:
     return out
 
 
+def inform_scores(indicator: str) -> dict:
+    """{iso3: score} for an INFORM component (e.g. 'HA', 'INFORM') from the JRC INFORM API."""
+    url = f"{INFORM}/countries/Scores/?WorkflowId={INFORM_WORKFLOW}&IndicatorId={indicator}"
+    payload = _get(url)
+    return {r["Iso3"]: r["IndicatorScore"] for r in payload if r.get("Iso3") in NAMES}
+
+
 def main() -> None:
     frame = {"iso3": list(NAMES), "country": [NAMES[i] for i in NAMES]}
     cols = {}
@@ -72,6 +81,14 @@ def main() -> None:
         vals = latest_values(code, year, rng)
         cols[col] = [vals.get(i) for i in NAMES]
         print(f"{code:16s} -> {col:22s} {sum(v is not None for v in cols[col])}/7 countries")
+
+    # INFORM Risk (JRC) — real hazard & exposure + overall risk for cross-check
+    ha = inform_scores("HA")
+    inform = inform_scores("INFORM")
+    cols["hazard_exposure_inform"] = [ha.get(i) for i in NAMES]
+    cols["inform_risk_overall"] = [inform.get(i) for i in NAMES]
+    print(f"INFORM HA        -> hazard_exposure_inform {sum(v is not None for v in cols['hazard_exposure_inform'])}/7 countries")
+
     df = pd.DataFrame({**frame, **cols})
     DATA.mkdir(exist_ok=True)
     df.to_csv(DATA / "worldbank_indicators.csv", index=False)

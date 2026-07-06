@@ -1,0 +1,8 @@
+iso3,country,population,hazard,vulnerability,readiness_gap,INDEX_0_100,inform_overall_ref,priority_rank
+SOM,Somalia,19009151,1.0,0.804,0.729,84.4,8.9,1
+TCD,Chad,20299123,0.275,0.855,0.883,67.1,6.5,2
+ETH,Ethiopia,132059767,0.522,0.666,0.788,65.9,6.5,3
+KHM,Cambodia,17638801,0.217,0.394,0.157,25.6,4.7,4
+ECU,Ecuador,18135478,0.333,0.227,0.051,20.4,4.1,5
+FJI,Fiji,928784,0.029,0.274,0.054,11.9,2.9,6
+ATG,Antigua and Barbuda,93772,0.0,0.327,0.0,10.9,2.5,7
