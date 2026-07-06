@@ -1,0 +1,6 @@
+variant,kendall_tau_vs_baseline,ranking
+"baseline (min-max, arithmetic)",1.0,SOM > TCD > ETH > KHM > ECU > FJI > ATG
+geometric aggregation,0.905,SOM > ETH > TCD > KHM > ECU > FJI > ATG
+z-score normalisation,1.0,SOM > TCD > ETH > KHM > ECU > FJI > ATG
+hazard-weighted (0.5/0.25/0.25),0.905,SOM > ETH > TCD > KHM > ECU > FJI > ATG
+readiness-weighted (0.25/0.25/0.5),1.0,SOM > TCD > ETH > KHM > ECU > FJI > ATG

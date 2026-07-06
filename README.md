@@ -40,20 +40,46 @@ built from different inputs, so the agreement is a genuine cross-check, not circ
 
 ![Indicator heatmap](results/indicator_heatmap.png)
 
-### Robustness & uncertainty (Monte Carlo)
+### Robustness, rank-stability & sensitivity
 
-Composite indicators are only credible if the ranking survives reasonable changes in weights and
-data noise (per the OECD/JRC *Handbook on Constructing Composite Indicators*). A 5,000-run
-Monte-Carlo simulation — drawing the three dimension weights from a Dirichlet distribution and
-perturbing every normalised indicator with Gaussian noise — shows the **top-3 priority set
-(Somalia, Chad, Ethiopia) is stable in 100% of runs**, with 90% uncertainty intervals on each
-country's score.
+Composite indicators are only decision-useful if we quantify how uncertain and how stable the
+ranking is (per the OECD/JRC *Handbook on Constructing Composite Indicators*). A 20,000-run
+Monte-Carlo simulation draws the three dimension weights from a Dirichlet distribution and
+perturbs every normalised indicator with Gaussian noise.
 
-![Uncertainty](results/uncertainty.png)
+Coarse "top-3 membership" is trivially stable here — the score gap from rank 3 to rank 4 (~40
+points) is about **7× the ~6-point noise**, so the top-3 never changes. The decision-relevant
+uncertainty is *within* the blocks, which the **full rank-probability** surface reveals:
 
-`src/uncertainty.py` → `results/uncertainty.png`, `results/uncertainty.csv`. The dataset also
-carries the full **INFORM component decomposition** (Hazard & Exposure, Vulnerability, Coping
-Capacity) for independent comparison against the World-Bank-based dimensions.
+![Rank stability](results/rank_stability.png)
+
+- **Somalia is #1 in ~98%** of simulations.
+- **Chad vs Ethiopia trade ranks 2↔3** (Chad #2 ≈58% / #3 ≈40%) — a genuine near-tie.
+- **Antigua vs Fiji are ≈50/50** for 6th/7th.
+
+Pairwise dominance — P(row ranks above column) — makes the contested pairs explicit:
+
+![Dominance](results/dominance_matrix.png)
+
+**On the score band (important):** the interval on each country's score is a *sensitivity band*,
+**not a statistical confidence interval** — the indicators are census-style values, so there is no
+sampling error. The band answers "how far could the score move under defensible alternative
+weightings and a 5% data-perturbation stress?" A variance decomposition shows this spread is
+**dominated by the weighting choice** (e.g. **91% for Chad**), and is widest exactly where a
+country's dimension profile is uneven — Chad scores very high on vulnerability/readiness-gap but
+low on hazard, so its score is weight-sensitive, whereas Somalia (high on all three) is tight.
+
+![Uncertainty sources](results/uncertainty_sources.png)
+
+**Weight sensitivity** (sweeping each dimension's weight 0→0.8) and **structural robustness**
+(Kendall's τ of the ranking under geometric vs arithmetic aggregation and z-score vs min-max
+normalisation: **τ = 0.90–1.00**) confirm the ordering is stable to reasonable methodological
+choices.
+
+`src/uncertainty.py` → `results/{uncertainty,rank_stability,dominance_matrix,weight_sensitivity}.png`
++ `rank_stability.csv`, `structural_sensitivity.csv`. The dataset also carries the full **INFORM
+component decomposition** (Hazard & Exposure, Vulnerability, Coping Capacity) for independent
+comparison against the World-Bank-based dimensions.
 
 ### Spatial view
 
@@ -122,7 +148,12 @@ climate-risk-early-warning/
 │   ├── index_ranking.png
 │   ├── indicator_heatmap.png
 │   ├── index_map.png
-│   ├── uncertainty.png
+│   ├── uncertainty.png            # sensitivity band (not a statistical CI)
+│   ├── uncertainty_sources.png    # variance: weighting vs data-perturbation
+│   ├── rank_stability.png/.csv    # P(country holds rank r)
+│   ├── dominance_matrix.png       # P(row ranks above column)
+│   ├── weight_sensitivity.png     # one-at-a-time weight sweeps
+│   ├── structural_sensitivity.csv # Kendall τ across method variants
 │   └── uncertainty.csv
 ├── notebook.ipynb
 ├── requirements.txt
