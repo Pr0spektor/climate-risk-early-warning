@@ -1,0 +1,8 @@
+iso3,country,index_mean,ci05,ci95,p_top3_%
+SOM,Somalia,83.1,78.3,87.9,100.0
+TCD,Chad,66.4,54.8,76.6,100.0
+ETH,Ethiopia,65.4,59.8,70.5,100.0
+KHM,Cambodia,26.0,20.7,31.2,0.0
+ECU,Ecuador,21.0,15.9,26.6,0.0
+ATG,Antigua and Barbuda,12.5,6.8,18.8,0.0
+FJI,Fiji,12.5,7.6,17.6,0.0

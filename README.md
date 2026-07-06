@@ -2,9 +2,9 @@
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Pr0spektor/climate-risk-early-warning/blob/main/notebook.ipynb)
 
-A reproducible, **real-data** analysis for the seven Green Climate Fund
-**Early Warnings for All (EW4All)** pilot countries — Antigua and Barbuda, Cambodia, Chad,
-Ecuador, Ethiopia, Fiji and Somalia.
+A reproducible, **real-data Climate Risk & Vulnerability Assessment (CRVA)** for the seven Green
+Climate Fund **Early Warnings for All (EW4All)** pilot countries — Antigua and Barbuda, Cambodia,
+Chad, Ecuador, Ethiopia, Fiji and Somalia.
 
 It answers a concrete prioritisation question:
 
@@ -39,6 +39,29 @@ Accessed 2026-07-06. Full indicator codes, years and URLs in [`data/sources.md`]
 built from different inputs, so the agreement is a genuine cross-check, not circular.
 
 ![Indicator heatmap](results/indicator_heatmap.png)
+
+### Robustness & uncertainty (Monte Carlo)
+
+Composite indicators are only credible if the ranking survives reasonable changes in weights and
+data noise (per the OECD/JRC *Handbook on Constructing Composite Indicators*). A 5,000-run
+Monte-Carlo simulation — drawing the three dimension weights from a Dirichlet distribution and
+perturbing every normalised indicator with Gaussian noise — shows the **top-3 priority set
+(Somalia, Chad, Ethiopia) is stable in 100% of runs**, with 90% uncertainty intervals on each
+country's score.
+
+![Uncertainty](results/uncertainty.png)
+
+`src/uncertainty.py` → `results/uncertainty.png`, `results/uncertainty.csv`. The dataset also
+carries the full **INFORM component decomposition** (Hazard & Exposure, Vulnerability, Coping
+Capacity) for independent comparison against the World-Bank-based dimensions.
+
+### Spatial view
+
+Spatial distribution of the index across the seven pilot countries (bubble size & colour = index;
+national-capital coordinates). Demonstrates handling and visualisation of geospatial data — the
+GIS step of a CRVA. Swap in GeoPandas + a shapefile for full-polygon choropleths.
+
+![Spatial map](results/index_map.png)
 
 ## Method
 
@@ -76,6 +99,8 @@ global scores.
 pip install -r requirements.txt
 python src/fetch_data.py      # re-fetch the latest real data from the World Bank + INFORM APIs
 python src/build_index.py     # compute the index + write results/ charts and CSV
+python src/spatial_map.py     # render the spatial (GIS-style) map of the index
+python src/uncertainty.py     # Monte-Carlo robustness (rank-stability + 90% intervals)
 ```
 
 Or open the notebook in Google Colab via the badge above (zero setup).
@@ -89,11 +114,16 @@ climate-risk-early-warning/
 │   └── sources.md                 # indicator codes, years, definitions, limitations
 ├── src/
 │   ├── fetch_data.py              # live fetch from World Bank + JRC INFORM APIs
-│   └── build_index.py             # computes index + charts + validation
+│   ├── build_index.py             # computes index + charts + validation
+│   ├── spatial_map.py             # geospatial (GIS-style) map of the index
+│   └── uncertainty.py             # Monte-Carlo robustness / sensitivity analysis
 ├── results/
 │   ├── index.csv
 │   ├── index_ranking.png
-│   └── indicator_heatmap.png
+│   ├── indicator_heatmap.png
+│   ├── index_map.png
+│   ├── uncertainty.png
+│   └── uncertainty.csv
 ├── notebook.ipynb
 ├── requirements.txt
 └── LICENSE

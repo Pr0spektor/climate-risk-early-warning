@@ -82,12 +82,16 @@ def main() -> None:
         cols[col] = [vals.get(i) for i in NAMES]
         print(f"{code:16s} -> {col:22s} {sum(v is not None for v in cols[col])}/7 countries")
 
-    # INFORM Risk (JRC) — real hazard & exposure + overall risk for cross-check
-    ha = inform_scores("HA")
-    inform = inform_scores("INFORM")
+    # INFORM Risk (JRC) — full component decomposition + overall risk for cross-check
+    ha = inform_scores("HA")          # Hazard & Exposure
+    vu = inform_scores("VU")          # Vulnerability
+    cc = inform_scores("CC")          # Lack of Coping Capacity
+    inform = inform_scores("INFORM")  # Overall INFORM risk
     cols["hazard_exposure_inform"] = [ha.get(i) for i in NAMES]
-    cols["inform_risk_overall"] = [inform.get(i) for i in NAMES]
-    print(f"INFORM HA        -> hazard_exposure_inform {sum(v is not None for v in cols['hazard_exposure_inform'])}/7 countries")
+    cols["inform_vulnerability"]   = [vu.get(i) for i in NAMES]
+    cols["inform_coping_gap"]      = [cc.get(i) for i in NAMES]
+    cols["inform_risk_overall"]    = [inform.get(i) for i in NAMES]
+    print(f"INFORM HA/VU/CC/overall -> {sum(v is not None for v in cols['hazard_exposure_inform'])}/7 countries")
 
     df = pd.DataFrame({**frame, **cols})
     DATA.mkdir(exist_ok=True)
