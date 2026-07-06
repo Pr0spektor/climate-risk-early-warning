@@ -1,58 +1,100 @@
-# Climate Risk & Early-Warning — Technical Portfolio
+# EW4All Vulnerability & Readiness Index
 
-Author: **Pr0spektor**
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Pr0spektor/climate-risk-early-warning/blob/main/notebook.ipynb)
 
-A small set of **reproducible technical investigations** that demonstrate methods relevant to
-multi-hazard early-warning systems (MHEWS) and climate-risk analysis — the problem space of
-initiatives such as the UN **Early Warnings for All (EW4All)**.
+A reproducible, **real-data** analysis for the seven Green Climate Fund
+**Early Warnings for All (EW4All)** pilot countries — Antigua and Barbuda, Cambodia, Chad,
+Ecuador, Ethiopia, Fiji and Somalia.
 
-> **Honest framing.** These are demonstration analyses built to show method and code quality.
-> They use **public or clearly-synthetic illustrative data** (noted in each folder), not
-> confidential project data. They translate methods I applied in 10+ years of **geodynamic
-> (geohazard) monitoring and subsurface risk management** into the climate / disaster-risk
-> context. Every technique here is one I can explain and defend in an interview.
+It answers a concrete prioritisation question:
 
-## How this maps to the EW4All value chain
+> **Where are people most vulnerable to climate hazards *and* least served by the basic systems
+> an early-warning chain depends on (power, water, mobile reach)?**
 
-| EW4All pillar | Lead agency | Investigation in this repo |
+All inputs are **official World Bank Open Data**, fetched live from `api.worldbank.org`
+(accessed 2026-07-06; World Bank "last updated" 2026-07-01). No synthetic data. See
+[`data/sources.md`](data/sources.md) for every indicator code, year and definition.
+
+## Result
+
+![Index ranking](results/index_ranking.png)
+
+| Rank | Country | Index (0–100) | Vulnerability | Readiness gap |
+|---|---|---|---|---|
+| 1 | Chad | 86.8 | 0.86 | 0.88 |
+| 2 | Somalia | 76.6 | 0.80 | 0.73 |
+| 3 | Ethiopia | 72.4 | 0.67 | 0.79 |
+| 4 | Cambodia | 24.9 | 0.39 | 0.16 |
+| 5 | Fiji | 12.2 | 0.27 | 0.05 |
+| 6 | Ecuador | 10.8 | 0.23 | 0.05 |
+| 7 | Antigua and Barbuda | 0.0 | 0.33 | 0.00 |
+
+![Indicator heatmap](results/indicator_heatmap.png)
+
+The ranking aligns with independent assessments (Sahel / Horn of Africa show the highest
+combined vulnerability and lowest service coverage), which is a sanity check on the method — but
+the numbers here are computed only from the cited open data.
+
+## Method
+
+Two INFORM-style dimensions, each built only from openly-available authoritative data:
+
+- **Vulnerability** — GDP per capita (inverted), undernourishment, under-5 mortality, rural
+  population share (harder-to-reach).
+- **Readiness gap** — access to electricity (inverted), basic drinking water (inverted), mobile
+  subscriptions per 100 (inverted; capped at 100 = saturated reach — a proxy for how far a mobile
+  warning can travel, EW4All Pillar 3).
+
+Steps: set each indicator's polarity so higher = worse → min-max normalise 0–1 across the seven
+countries → average available indicators per dimension → composite =
+`geometric_mean(vulnerability, readiness_gap) × 100` → rank. Missing values (Antigua's
+undernourishment and mobile figures) are left blank and simply excluded from that country's
+dimension average — never imputed.
+
+Index values are **relative across these seven countries** (a prioritisation tool), not absolute
+global risk scores. A physical hazard/exposure term is intentionally out of scope here; the code
+is structured so a hazard column (e.g. from the JRC INFORM Risk Index or EM-DAT) can be added
+directly.
+
+## How this maps to EW4All
+
+| EW4All pillar | Lead agency | This repo |
 |---|---|---|
-| 1. Risk knowledge | UNDRR | `multihazard_risk_index/` — normalised multi-hazard exposure/vulnerability index & ranking |
-| 2. Detection, observation, monitoring, forecasting | WMO | `subsidence_early_warning/` — monitoring time-series + anomaly/velocity threshold detection |
-| 3. Warning dissemination & communication | ITU | alert-log output + severity tiers in `subsidence_early_warning/` |
-| 4. Preparedness & response | IFRC | risk ranking to prioritise where to act first (`multihazard_risk_index/`) |
+| 1. Risk knowledge | UNDRR | vulnerability dimension + country ranking |
+| 2. Detection / monitoring | WMO | (out of scope — hazard term is pluggable) |
+| 3. Warning dissemination | ITU | mobile-reach indicator in the readiness gap |
+| 4. Preparedness & response | IFRC | readiness gap → where basic systems are weakest |
 
-## Background this builds on (real experience)
+## Run it
 
-- Designed and supervised **geodynamic monitoring / early-warning systems** for geohazards
-  (ground deformation, subsidence, technology-induced seismicity) protecting populations,
-  infrastructure and the environment — presented at IGU, Samarkand 2018.
-- **Programme leadership** across 17 licence areas (>7,000 km²) with full CAPEX/OPEX ownership.
-- **Risk & uncertainty frameworks**, audit-proof regulatory reporting, national standard authorship.
-- **Python** analytical workflows (NumPy / SciPy / pandas / matplotlib) for processing, anomaly
-  detection and automated reporting.
+```bash
+pip install -r requirements.txt
+python src/fetch_data.py      # re-fetch the latest real data from the World Bank API
+python src/build_index.py     # compute the index + write results/ charts and CSV
+```
 
-## Contents
+Or open the notebook in Google Colab via the badge above (zero setup).
+
+## Repository layout
 
 ```
 climate-risk-early-warning/
-├── subsidence_early_warning/     # monitoring time-series → anomaly detection → tiered alerts
-├── multihazard_risk_index/       # composite risk index across the 7 EW4All pilot countries
+├── data/
+│   ├── worldbank_indicators.csv   # real values (committed snapshot, accessed 2026-07-06)
+│   └── sources.md                 # indicator codes, years, definitions, limitations
+├── src/
+│   ├── fetch_data.py              # live fetch from api.worldbank.org (reproduces the CSV)
+│   └── build_index.py             # computes index + charts
+├── results/
+│   ├── vulnerability_readiness_index.csv
+│   ├── index_ranking.png
+│   └── indicator_heatmap.png
+├── notebook.ipynb
 ├── requirements.txt
-├── LICENSE
-└── .gitignore
+└── LICENSE
 ```
 
-## Quick start
+## Data & licence
 
-```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-python subsidence_early_warning/analysis.py
-python multihazard_risk_index/risk_index.py
-```
-
-Each script writes its figures and a results table into its own folder.
-
-## Countries in scope (EW4All GCF multi-country project)
-
-Antigua and Barbuda · Cambodia · Chad · Ecuador · Ethiopia · Fiji · Somalia.
+Data © World Bank, [Open Data](https://data.worldbank.org/) (CC BY 4.0). Code released under the
+MIT Licence.
