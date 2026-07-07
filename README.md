@@ -5,16 +5,15 @@
 <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX) -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A reproducible, **real-data Climate Risk & Vulnerability Assessment (CRVA)** for the seven Green
+A reproducible, real-data **Climate Risk & Vulnerability Assessment (CRVA)** for the seven Green
 Climate Fund **Early Warnings for All (EW4All)** pilot countries — Antigua and Barbuda, Cambodia,
 Chad, Ecuador, Ethiopia, Fiji and Somalia.
 
-It answers a concrete prioritisation question:
+It addresses a central programme-prioritisation question: **where do high hazard and exposure, high
+human vulnerability, and weak enabling systems (power, water, mobile reach) coincide — and therefore
+where should early-warning investment be directed first?**
 
-> **Where do high hazard & exposure, high human vulnerability, and weak basic systems
-> (power, water, mobile reach) coincide — so an early-warning programme should act first?**
-
-Every input is **official open data**, fetched live:
+Every input is official open data, fetched live:
 
 - **Hazard & Exposure** — [JRC INFORM Risk 2023](https://drmkc.jrc.ec.europa.eu/inform-index)
   (Hazard & Exposure component, 0–10).
@@ -50,9 +49,9 @@ ranking is (per the OECD/JRC *Handbook on Constructing Composite Indicators*). A
 Monte-Carlo simulation draws the three dimension weights from a Dirichlet distribution and
 perturbs every normalised indicator with Gaussian noise.
 
-Coarse "top-3 membership" is trivially stable here — the score gap from rank 3 to rank 4 (~40
-points) is about **7× the ~6-point noise**, so the top-3 never changes. The decision-relevant
-uncertainty is *within* the blocks, which the **full rank-probability** surface reveals:
+Top-3 membership is essentially fixed here — the score gap from rank 3 to rank 4 (~40 points) is
+about **7× the ~6-point spread**, so the leading group does not change. The decision-relevant
+uncertainty lies *within* the groups, which the **full rank-probability** surface reveals:
 
 ![Rank stability](results/rank_stability.png)
 
@@ -64,13 +63,13 @@ Pairwise dominance — P(row ranks above column) — makes the contested pairs e
 
 ![Dominance](results/dominance_matrix.png)
 
-**On the score band (important):** the interval on each country's score is a *sensitivity band*,
-**not a statistical confidence interval** — the indicators are census-style values, so there is no
-sampling error. The band answers "how far could the score move under defensible alternative
-weightings and a 5% data-perturbation stress?" A variance decomposition shows this spread is
-**dominated by the weighting choice** (e.g. **91% for Chad**), and is widest exactly where a
-country's dimension profile is uneven — Chad scores very high on vulnerability/readiness-gap but
-low on hazard, so its score is weight-sensitive, whereas Somalia (high on all three) is tight.
+**Interpreting the score band.** The interval on each country's score is a *sensitivity band*, not
+a statistical confidence interval — the indicators are census-style values, so there is no sampling
+error. It quantifies how far a score could move under defensible alternative weightings and a 5%
+data-perturbation stress. A variance decomposition shows the spread is **dominated by the weighting
+choice** (91% for Chad), and is widest where a country's dimension profile is uneven: Chad scores
+very high on vulnerability and readiness-gap but low on hazard, making its score weight-sensitive,
+whereas Somalia — high on all three — is tightly constrained.
 
 ![Uncertainty sources](results/uncertainty_sources.png)
 
