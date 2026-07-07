@@ -1,5 +1,6 @@
 # EW4All Multi-Hazard Risk & Readiness Index
 
+[![CI](https://github.com/Pr0spektor/climate-risk-early-warning/actions/workflows/ci.yml/badge.svg)](https://github.com/Pr0spektor/climate-risk-early-warning/actions/workflows/ci.yml)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Pr0spektor/climate-risk-early-warning/blob/main/notebook.ipynb)
 <!-- After the first GitHub release, replace with the Zenodo DOI badge (see RELEASING.md): -->
 <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX) -->
@@ -143,6 +144,12 @@ validates the alert logic offline.
 
 Or open the notebook in Google Colab via the badge above (zero setup).
 
+## Tests & CI
+`pytest -q` runs a suite covering normalisation polarity/bounds, the no-imputation rule for missing
+values, index bounds and the expected priority ordering, and agreement with the independent INFORM
+score (Spearman ρ ≥ 0.9). GitHub Actions runs the tests plus the index and robustness scripts on
+every push (`.github/workflows/ci.yml`).
+
 ## Repository layout
 
 ```
@@ -168,6 +175,8 @@ climate-risk-early-warning/
 │   ├── weight_sensitivity.png     # one-at-a-time weight sweeps
 │   ├── structural_sensitivity.csv # Kendall τ across method variants
 │   └── uncertainty.csv
+├── tests/                        # pytest suite (normalisation, ranking, INFORM validation)
+├── .github/workflows/            # CI (tests + index/robustness on every push)
 ├── notebook.ipynb
 ├── requirements.txt
 └── LICENSE
