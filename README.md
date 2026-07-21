@@ -50,13 +50,13 @@ ranking is (per the OECD/JRC *Handbook on Constructing Composite Indicators*). A
 Monte-Carlo simulation draws the three dimension weights from a Dirichlet distribution and
 perturbs every normalised indicator with Gaussian noise.
 
-Top-3 membership is essentially fixed here — the score gap from rank 3 to rank 4 (~40 points) is
-about **7× the ~6-point spread**, so the leading group does not change. The decision-relevant
+Top-3 membership is essentially fixed here — the score gap from rank 3 to rank 4 (≈40 points) is
+about **7× the ≈6-point spread**, so the leading group does not change. The decision-relevant
 uncertainty lies *within* the groups, which the **full rank-probability** surface reveals:
 
 ![Rank stability](results/rank_stability.png)
 
-- **Somalia is #1 in ~98%** of simulations.
+- **Somalia is #1 in ≈98%** of simulations.
 - **Chad vs Ethiopia trade ranks 2↔3** (Chad #2 ≈58% / #3 ≈40%) — a genuine near-tie.
 - **Antigua vs Fiji are ≈50/50** for 6th/7th.
 
