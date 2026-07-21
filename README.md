@@ -1,6 +1,6 @@
 # EW4All Multi-Hazard Risk & Readiness Index
 
-[![CI](https://github.com/Pr0spektor/climate-risk-early-warning/actions/workflows/ci.yml/badge.svg)](https://github.com/Pr0spektor/climate-risk-early-warning/actions/workflows/ci.yml)
+[![CI](https://github.com/Pr0spektor/climate-risk-early-warning/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Pr0spektor/climate-risk-early-warning/actions/workflows/ci.yml)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Pr0spektor/climate-risk-early-warning/blob/main/notebook.ipynb)
 <!-- After the first GitHub release, replace with the Zenodo DOI badge (see RELEASING.md): -->
 <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX) -->
