@@ -208,6 +208,15 @@ def main():
     # ---------- 4) one-at-a-time weight sensitivity ----------
     sweep = np.linspace(0, 0.8, 33)
     fig, axes = plt.subplots(1, 3, figsize=(13, 4.2), sharey=True)
+    def _declutter(ys, min_gap):
+        """Nudge end-labels apart so they never overlap, preserving order."""
+        idx = sorted(range(len(ys)), key=lambda i: ys[i])
+        pos = list(ys)
+        for k in range(1, len(idx)):
+            lo, hi = idx[k - 1], idx[k]
+            if pos[hi] - pos[lo] < min_gap:
+                pos[hi] = pos[lo] + min_gap
+        return pos
     for ax, (di, dname) in zip(axes, enumerate(DIMENSIONS)):
         traj = []
         for wv in sweep:
@@ -216,8 +225,15 @@ def main():
         traj = np.array(traj)  # sweep x n
         for c in range(n):
             ax.plot(sweep, traj[:, c], lw=1.6)
-            ax.annotate(df["iso3"][c], (sweep[-1], traj[-1, c]), fontsize=7,
-                        xytext=(3, 0), textcoords="offset points", va="center")
+        # place country codes at the right edge, spread vertically so they never collide
+        ends = traj[-1, :]
+        label_y = _declutter(list(ends), min_gap=3.4)
+        for c in range(n):
+            ax.annotate(df["iso3"][c], xy=(sweep[-1], ends[c]),
+                        xytext=(sweep[-1] + 0.03, label_y[c]), fontsize=7, va="center",
+                        arrowprops=dict(arrowstyle="-", lw=0.4, color="#999",
+                                        shrinkA=0, shrinkB=0))
+        ax.set_xlim(0, 0.94)
         ax.set_title(f"weight on: {dname}"); ax.set_xlabel("dimension weight"); ax.grid(alpha=0.3)
     axes[0].set_ylabel("Index (0–100)")
     fig.suptitle("One-at-a-time weight sensitivity (other two weights kept equal)")
