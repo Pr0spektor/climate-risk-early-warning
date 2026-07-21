@@ -23,6 +23,9 @@ Every input is official open data, fetched live:
 
 Accessed 2026-07-06. Full indicator codes, years and URLs in [`data/sources.md`](data/sources.md).
 
+![Uncertainty](results/uncertainty.png)
+![Weight sensitivity](results/weight_sensitivity.png)
+
 ## Result
 
 ![Index ranking](results/index_ranking.png)
