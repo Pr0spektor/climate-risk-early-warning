@@ -40,9 +40,11 @@ Accessed 2026-07-06. Full indicator codes, years and URLs in [`data/sources.md`]
 | 6 | Fiji | 11.9 | 0.03 | 0.27 | 0.05 | 2.9 |
 | 7 | Antigua and Barbuda | 10.9 | 0.00 | 0.33 | 0.00 | 2.5 |
 
-**Independent validation:** the ranking matches the JRC INFORM *overall* risk score — which is
-**not** used in the composite — at a Spearman rank correlation of **ρ ≈ 0.99**. The two were
-built from different inputs, so the agreement is a genuine cross-check, not circular.
+**Consistency check against INFORM:** the ranking matches the JRC INFORM *overall* risk score at
+a Spearman rank correlation of **ρ ≈ 0.99**. This is a consistency check, not an independent
+validation: the hazard dimension **is** the INFORM Hazard & Exposure component, so the two share
+an input and part of the agreement is structural. What the check does establish is that adding
+the World Bank vulnerability and readiness indicators does not overturn the INFORM ordering.
 
 ![Indicator heatmap](results/indicator_heatmap.png)
 
