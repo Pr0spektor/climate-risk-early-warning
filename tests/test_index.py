@@ -81,3 +81,29 @@ def test_hazard_weight_sensitivity_is_reported_for_every_country():
     assert len(table) == len(df)
     assert (table["max_shift"] >= 0).all()
     assert table["max_shift"].max() <= len(df) - 1
+
+
+def test_a_country_with_one_indicator_does_not_get_a_dimension_score():
+    """Averaging whatever is present silently rewards missing data."""
+    import pandas as pd
+    from src.build_index import dimension_score
+
+    df = pd.DataFrame({
+        "a": [1.0, 2.0, 3.0],
+        "b": [1.0, None, 3.0],
+        "c": [1.0, None, 3.0],
+    })
+    spec = {"a": "direct", "b": "direct", "c": "direct"}
+    score = dimension_score(df, spec)
+    assert pd.isna(score.iloc[1]), "one of three indicators must not produce a score"
+    assert score.iloc[0] == 0.0 and score.iloc[2] == 1.0
+
+
+def test_a_single_indicator_dimension_is_still_scored():
+    """The hazard composite is one indicator by construction and must survive the guard."""
+    import pandas as pd
+    from src.build_index import dimension_score
+
+    df = pd.DataFrame({"hazard_exposure_inform": [1.0, 5.0, 9.0]})
+    score = dimension_score(df, {"hazard_exposure_inform": "direct"})
+    assert score.notna().all()

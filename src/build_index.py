@@ -74,9 +74,31 @@ def normalise(col: pd.Series, polarity: str) -> pd.Series:
     return (x - lo) / (hi - lo)  # 0 = best, 1 = worst (NaNs preserved)
 
 
-def dimension_score(df: pd.DataFrame, spec: dict) -> pd.Series:
+MIN_INDICATORS = 2
+
+
+def dimension_coverage(df: pd.DataFrame, spec: dict) -> pd.Series:
+    """How many indicators of a dimension a country actually has."""
+    parts = [df[c] for c in spec]
+    return pd.concat(parts, axis=1).notna().sum(axis=1)
+
+
+def dimension_score(df: pd.DataFrame, spec: dict, min_indicators: int | None = None) -> pd.Series:
+    """Mean of the available indicators, but only if enough of them exist.
+
+    Averaging whatever happens to be present silently rewards missing data: a country with
+    one of three readiness indicators gets a score built from that one, on the same 0-1 scale
+    as a country built from three. Below `min_indicators` the dimension is reported as
+    missing and the composite re-weights over the dimensions that do exist.
+    """
     parts = [normalise(df[c], pol) for c, pol in spec.items()]
-    return pd.concat(parts, axis=1).mean(axis=1, skipna=True)
+    frame = pd.concat(parts, axis=1)
+    score = frame.mean(axis=1, skipna=True)
+    # A dimension built from a single indicator (the hazard composite) cannot be held to a
+    # two-indicator rule; the guard applies only where there is something to guard against.
+    threshold = min(MIN_INDICATORS, len(spec)) if min_indicators is None else min_indicators
+    score[frame.notna().sum(axis=1) < threshold] = np.nan
+    return score
 
 
 def weighted_composite(dim_scores: dict, weights: dict) -> pd.Series:
@@ -112,13 +134,19 @@ def main() -> None:
     df = pd.read_csv(DATA)
 
     dim_scores = {name: dimension_score(df, spec) for name, spec in DIMENSIONS.items()}
-    composite = pd.concat(dim_scores.values(), axis=1).mean(axis=1) * 100.0
+    dim_frame = pd.concat(dim_scores.values(), axis=1)
+    dim_frame.columns = list(dim_scores)
+    composite = dim_frame.mean(axis=1, skipna=True) * 100.0
 
     out = df[["iso3", "country", "population"]].copy()
     for name, s in dim_scores.items():
         out[name] = s.round(3)
     out["INDEX_0_100"] = composite.round(1)
     out["inform_overall_ref"] = df["inform_risk_overall"]
+    out["dimensions_used"] = dim_frame.notna().sum(axis=1).values
+    out["hazard_indicators"] = dimension_coverage(df, DIMENSIONS["hazard"]).values
+    out["vulnerability_indicators"] = dimension_coverage(df, DIMENSIONS["vulnerability"]).values
+    out["readiness_indicators"] = dimension_coverage(df, DIMENSIONS["readiness_gap"]).values
     out = out.sort_values("INDEX_0_100", ascending=False).reset_index(drop=True)
     out["priority_rank"] = np.arange(1, len(out) + 1)
     out.to_csv(RESULTS / "index.csv", index=False)
