@@ -79,6 +79,35 @@ def dimension_score(df: pd.DataFrame, spec: dict) -> pd.Series:
     return pd.concat(parts, axis=1).mean(axis=1, skipna=True)
 
 
+def weighted_composite(dim_scores: dict, weights: dict) -> pd.Series:
+    """Weighted mean of the dimension scores on a 0-100 scale (weights need not sum to 1)."""
+    frame = pd.concat(dim_scores.values(), axis=1)
+    frame.columns = list(dim_scores)
+    w = pd.Series(weights, dtype=float)
+    return (frame * w).sum(axis=1, skipna=True) / w.sum() * 100.0
+
+
+def hazard_weight_sensitivity(dim_scores: dict,
+                              grid=(0.0, 1.0 / 6.0, 1.0 / 3.0, 0.5)) -> pd.DataFrame:
+    """Rank the countries for a range of hazard weights.
+
+    The hazard dimension is a single imported composite (INFORM Hazard & Exposure), so it
+    carries a third of the weight with no internal structure we can inspect. Rather than
+    pretend that is a measured quantity, this reports how much the ranking actually depends
+    on it: if the order survives hazard weights from 0 to 0.5, the single-indicator
+    dimension is not driving the result.
+    """
+    rows = {}
+    for wh in grid:
+        rest = (1.0 - wh) / 2.0
+        comp = weighted_composite(dim_scores, {"hazard": wh, "vulnerability": rest,
+                                               "readiness_gap": rest})
+        rows[f"hazard_{wh:.2f}"] = comp.rank(ascending=False, method="min").astype(int)
+    table = pd.DataFrame(rows)
+    table["max_shift"] = table.max(axis=1) - table.min(axis=1)
+    return table
+
+
 def main() -> None:
     df = pd.read_csv(DATA)
 
@@ -93,6 +122,16 @@ def main() -> None:
     out = out.sort_values("INDEX_0_100", ascending=False).reset_index(drop=True)
     out["priority_rank"] = np.arange(1, len(out) + 1)
     out.to_csv(RESULTS / "index.csv", index=False)
+
+    # How much does the ranking depend on the one hazard indicator? Report it rather than
+    # assume it away.
+    sens = hazard_weight_sensitivity(dim_scores)
+    sens.index = out["country"].values
+    sens.sort_values("hazard_0.33").to_csv(RESULTS / "weight_sensitivity.csv")
+    shift = int(sens["max_shift"].max())
+    stable = int((sens["max_shift"] <= 1).sum())
+    print(f"Hazard-weight sensitivity: max rank shift {shift} position(s); "
+          f"{stable}/{len(sens)} countries move by at most one place across hazard weights 0-0.5.")
 
     # rank-agreement with the independent INFORM overall score (Spearman = Pearson on ranks)
     rho = out["INDEX_0_100"].rank().corr(out["inform_overall_ref"].rank())

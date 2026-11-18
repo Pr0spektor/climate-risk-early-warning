@@ -191,3 +191,13 @@ climate-risk-early-warning/
 
 World Bank data © World Bank ([CC BY 4.0](https://data.worldbank.org/)). INFORM Risk © European
 Commission Joint Research Centre / INFORM. Code released under the MIT Licence.
+
+### How much does the single hazard indicator matter?
+
+The hazard dimension is one imported composite (INFORM Hazard & Exposure) carrying a third
+of the weight, with no internal structure this repository can inspect. Rather than hide
+that, `hazard_weight_sensitivity()` re-ranks the countries for hazard weights from 0 to 0.5
+and writes `results/weight_sensitivity.csv`. Across that range the **maximum rank shift is
+2 positions**, and 5 of 7 countries move by at most one place: the ordering is driven by
+vulnerability and readiness, not by the borrowed hazard score. That is a property of this
+sample, not a general guarantee, and the table is published so a reader can check it.

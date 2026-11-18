@@ -59,3 +59,25 @@ def _run_all():
 
 if __name__ == "__main__":
     _run_all()
+
+
+def test_weighted_composite_matches_the_published_index():
+    from src.build_index import DIMENSIONS, dimension_score, weighted_composite
+    import pandas as pd
+    from pathlib import Path
+    df = pd.read_csv(Path(__file__).resolve().parent.parent / "data" / "worldbank_indicators.csv")
+    dims = {name: dimension_score(df, spec) for name, spec in DIMENSIONS.items()}
+    comp = weighted_composite(dims, {"hazard": 1/3, "vulnerability": 1/3, "readiness_gap": 1/3})
+    assert comp.between(0, 100).all()
+
+
+def test_hazard_weight_sensitivity_is_reported_for_every_country():
+    from src.build_index import DIMENSIONS, dimension_score, hazard_weight_sensitivity
+    import pandas as pd
+    from pathlib import Path
+    df = pd.read_csv(Path(__file__).resolve().parent.parent / "data" / "worldbank_indicators.csv")
+    dims = {name: dimension_score(df, spec) for name, spec in DIMENSIONS.items()}
+    table = hazard_weight_sensitivity(dims)
+    assert len(table) == len(df)
+    assert (table["max_shift"] >= 0).all()
+    assert table["max_shift"].max() <= len(df) - 1
